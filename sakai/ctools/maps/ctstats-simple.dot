@@ -1,0 +1,107 @@
+digraph ctstatsSimple
+{
+	overlap = false
+#	rankdir = LR
+	ranksep = 0.5;
+	ratio = "auto";
+	compound="true";
+
+	node [shape="oval", fontsize=9, labelloc="c"];
+	edge [arrowsize=0.5, color=black, fontsize=7];
+
+	label="CTstats basic setup";
+	
+	"end-users" [penwidth="0", labelloc="t", shapefile="icons/cloud.png"];
+
+	apache [label="Apache (presentation)"];
+
+	"end-users" -> apache -> drraw [label="request", color="navy"];
+
+	drraw -> apache -> "end-users" [label="response", color="lime"];
+
+	drraw [label="drraw cgi (graphical reports)", URL="http://web.taranis.org/drraw"];
+
+	rrd [label="RRD files (timeseries data store)", URL="http://rrdtool.org"];
+
+	rrd -> drraw [color="navy"];
+
+	subgraph cluster_frontend {
+		label="";
+		URL="https://ctstats.ds.itd.umich.edu/";
+		apache; drraw;
+	}
+
+	subgraph data {
+		rrd;
+	}
+
+	appservers [shape="record",
+	 label="{CTools appservers|{<snmpd> UCD snmpd|{JVM|{<tomcat> Tomcat|<jvmsnmpd> snmpd | {<dbcp> DBCP|<jsp> Sakai JSP}}}}}"];
+
+	netscaler [label="Loadbalancer", shape="box"];
+
+	netapp [label="NAS (nfs)", shape="box"];
+
+	ctoolsdb [label="{CTools Oracle DB|{<sakai> Sakai tables|<dbmon> Data dict}}", shape="record"];
+
+	umiac [label="Enrollment info (umiac)", shape="box"];
+
+	subgraph cluster_input {
+		label="Sources of\nPerformance and usage statistics";
+		fontsize="8";
+		style="dashed";
+		rank = "same";
+		netscaler;
+		netapp;
+		appservers;
+		umiac;
+		ctoolsdb;
+	}
+
+	subgraph cluster_procs {
+		label="Processors";
+		labelloc="b";
+		style="dotted";
+		rank = "same";
+		snmp;
+		scr;
+		jsp;
+		toolprof;
+	}
+
+	snmp [label="SNMP client"];
+
+	scr [label="custom scripts"];
+
+#	scr [shape="record",
+#	 label="{custom scripts|{<oramon> oraMon|<usercount> userCount|<sakaistats> sakaiStats|<jvmmon> jvmMon|<checknetapp> checkNetapp}}"];
+
+	snmp -> scr;
+
+	toolprof -> rrd;
+
+	ctoolsdb:sakai -> jsp [label="jdbc"]; 
+	ctoolsdb:dbmon -> jsp [label="jdbc"]; 
+
+	appservers:jsp -> scr [label="https"];
+
+	jsp -> scr [label="https"];
+
+
+	scr -> rrd;	
+
+	umiac -> scr [label="https"];
+
+	netscaler -> snmp;
+	netapp -> snmp;
+	appservers:snmpd -> snmp;
+	appservers:jvmsnmpd -> snmp;
+
+
+
+	
+	netscaler -> weblogs [label="udp"];
+	weblogs -> toolprof;
+
+
+}

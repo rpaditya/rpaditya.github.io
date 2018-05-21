@@ -1,0 +1,149 @@
+digraph ctoolssystem
+{
+	overlap = false
+#	rankdir = LR
+	ranksep = 0.70;
+	ratio= "auto";
+	comound="true";
+	fontsize=8;
+
+	node [shape="oval", fontsize=9, labelloc="c"];
+	edge [arrowsize=0.5, color=black, dir="both"];
+
+	label="CTools (Prod) System";
+	URL="../ctstats/ctools-executive-overview-042810-0819.html";
+
+	lbs [label="load balancers\nns1.ds, ns2.ds", 
+		labelloc="b",
+		shapefile="icons/gswanson_Citrix_Netscaler_1.png", 
+		penwidth="0",
+		URL="../ctstats/netscaler-ns2.ds-042810-0830.html"
+		]
+
+	https [label="apache"];
+	jvm [shape="record", 
+		URL="../ctstats/ctools-app-misc-1yr.html",
+		label="{JVM|<tomcat> tomcat|<ctools> sakai|{<webdav> WebDAV|<dbpool> DBCP|<mua> James MUA}}"];
+	smtp [label="postfix"];
+	umiac [label="umiac", shape="house", color="brown", URL="../ctstats/ctools-overview-brief-042810-0828.html"];
+
+	localdisk [label="localdisk\nstatic files", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	subgraph cluster_appsever {
+		label="CTools appserver (Redhat 5.2 x86_64)\nalaking, kungpao, potpie, sirloin, turducken";
+		URL="../ctstats/ctools-appservers-042810-0826.html";
+		rank="same";
+		jvm; smtp; umiac; https; localdisk;
+	}
+
+	ssjvm [shape="record", 
+		label="{JVM|<tomcat> tomcat|<ctools> sakai|{<dbpool> DBCP | <lucene> Lucene| <evalport> Eval import }}"];
+	sshttp [label="apache"];
+	ssumiac [label="umiac", shape="house", color="brown"];	
+
+	subgraph cluster_searchserver {
+		label="CTools searchserver (Redhat 5.2 x86_64)\nribeye";
+		rank = "same";
+		ssjvm; sshttp; ssumiac;
+	}
+
+	jvm:ctools -> lbs -> sshttp -> ssjvm:tomcat [color="purple", style="dashed"];
+
+	ssjvm:lucene -> afsctsearch [color="green"];
+	ssumiac -> ssjvm:ctools [dir="right", color="brown"];
+	umiacdb -> ssumiac [dir="right"];
+	afsctsearch [label="/ctsearch/fs201", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	HEPROD [labelloc="t", penwidth="0", shapefile="icons/db.jpg"];
+	subgraph cluster_maisdb {
+		label="MAIS";
+		rank="same";
+#		HEQA; 
+#		HEODS; 
+		HEPROD;
+		flamingo;
+	}
+
+	ctsupport [shape="record", 
+		label="{<forprod> for_prod | <evaluploader> evalUploader}", 
+		URL="https://ctoolstest.ds.itd.umich.edu/stats/ctools/support"];
+
+	subgraph cluster_ctsupport { 
+		label = "CTsupport\nfeet";
+		ctsupport; 
+	}
+
+	HEPROD -> flamingo -> ctsupport:forprod [dir="right", color="magenta"];
+	ctsupport:evaluploader -> ssjvm:evalport [dir="right", color="magenta"];
+	ssjvm:dbpool -> ctoolsdb;
+
+	subgraph cluster_afs {
+		label="CTools search index\n/afs/umich.edu/group";
+		rank="same";
+		afsctsearch;		
+	}
+
+
+	cosign [shape="record", label="{<weblogin> Weblogin|<authcgi> Check cgi}"];
+	subgraph cluster_cosign { 
+		label="Cosign";
+		cosign; 
+	}
+
+#	Kerberos -> cosign [dir="right"];
+
+	https -> jvm:tomcat [color="green"];
+
+#	jvm:tomcat -> jvm:ctools;
+
+	ctoolsdb [label="ctools_user@CTOOLS", labelloc="t", penwidth="0", shapefile="icons/db.jpg",
+		URL="../ctstats/db-ctools-042810-0826.html"
+		];
+	jvm:dbpool -> ctoolsdb;
+
+	volctfs [label="CTools Resource files", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	https -> cosign:weblogin [color="orange"];
+	jvm:webdav -> cosign:authcgi [color="olive"];
+
+	jvm:tomcat -> volctfs [color="red"];
+#	jvm:mua -> jvm:ctools;
+	https -> localdisk [color="green", style="dotted"];
+	jvm:ctools -> umiac [color="brown"];
+	umiac -> umiacdb;
+
+	subgraph cluster_storage {
+		label="Netapp 3020\nboxcar";
+		URL="../ctstats/netapp-boxcar-042810-0829.html";
+		rank = "same";
+		volctfs; volora;
+	}
+
+	volora [label="Oracle data vols", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+	ctoolsdb -> volora [color="green"];
+
+	umiacdb [label="umiacv2@LESSONS", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+	umiacdb -> volora [color="green"];
+
+	subgraph cluster_dbserver {
+		label="Oracle 10g DB (Solaris 10)\nadb01";
+		rank = "same";
+		ctoolsdb; umiacdb;
+	}
+
+	subgraph cluster_eyeballs {
+		label = "Traffic sources";
+		rank = "same";
+		enduser; mta;
+	}
+
+
+	enduser [label = "end-user browser(s)", labelloc="t", penwidth="0", shapefile="icons/cloud.png"]
+	enduser -> UMNet -> lbs -> https [color = "green"]
+
+	virusscan [label="UM SMTP virus scan", labelloc="c"];
+	mta [label="SMTP mailers", labelloc="t", penwidth="0", shapefile="icons/cloud.png"];
+	mta -> UMNet -> virusscan -> lbs -> smtp -> jvm:mua [dir="right", color = "blue", style="dashed"];
+	jvm:ctools -> smtp -> UMNet -> mta [dir="right", color="cyan", style="dashed"];
+
+}

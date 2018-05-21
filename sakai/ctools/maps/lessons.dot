@@ -1,0 +1,114 @@
+digraph lessons
+{
+	overlap = false
+#	rankdir = LR
+	ranksep = 0.70;
+	ratio= "auto";
+	comound="true";
+	fontsize=8;
+
+	node [shape="oval", fontsize=9, labelloc="c"];
+	edge [arrowsize=0.5, color=black, dir="both"];
+
+	label="UM Lessons (Prod) System";
+
+	lbs [label="load balancers\nns1.ds, ns2.ds", 
+		labelloc="b",
+		shapefile="icons/gswanson_Citrix_Netscaler_1.png", 
+		penwidth="0",
+		URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917"
+		]
+
+	buddha [shape="record", label="{<apache> apache|{<modperl> mod_perl|<modcosign> mod_cosign}|<mason> Mason}"];
+
+#	socrates [shape="record", label="{<apache> apache|{<modperl> mod_perl|<modcosign> mod_cosign}|<mason> Mason}"];
+	umiac [label="umiac-service", shape="house", color="brown"];
+
+#	slocaldisk [label="localdisk\nstatic files", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	blocaldisk [label="localdisk\nstatic files", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	subgraph cluster_buddha {
+		label="Lessons appservers (Redhat 3 x86)\n(2) buddha, socrates\nDell 2650";
+		rank="same";
+		buddha; blocaldisk;
+	}
+
+#	subgraph cluster_socrates {
+#		label="Lessons appserver (Redhat 3 x86)\nsocrates";
+#		rank="same";
+#		socrates; slocaldisk;
+#	}
+
+	afslessons [label="/ct/lessons (~4.3GB used)", 
+		labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	buddha:modperl -> afslessons [dir="both", color="green"]
+#	socrates:modperl -> afslessons [dir="both", color="green"]
+
+	subgraph cluster_afs {
+		label="Lessons AFS storage\n/afs/umich.edu/group";
+		afslessons;		
+	}
+
+	cosign [shape="record", label="{<weblogin> Weblogin|<authcgi> Check cgi}"];
+	subgraph cluster_cosign { 
+		label="Cosign";
+		cosign; 
+	}
+
+	buddha:modcosign -> cosign:weblogin [color="orange"];
+#	socrates:modcosign -> cosign:weblogin [color="orange"];
+
+	buddha:modperl -> blocaldisk [color="green", style="dotted"];
+	buddha:modperl -> umiac [color="brown"];
+
+#	socrates:modperl -> slocaldisk [color="green", style="dotted"];
+#	socrates:modperl -> umiac [color="brown"];
+
+	umiac -> umiacdb;
+
+	volora [label="Oracle data vols", labelloc="t", penwidth="0", shapefile="icons/disk_subsystem.png"];
+
+	subgraph cluster_storage {
+		label="Netapp 3020\nboxcar";
+		rank = "same";
+		volora;
+	}
+
+	lessonsdb [label="lessons_user@LESSONS", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+	lessonsdb -> volora [color="green"];
+
+#	socrates:modperl -> lessonsdb;
+	buddha:modperl -> lessonsdb;
+
+	umiacdb [label="umiacv2@LESSONS", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+	umiacdb -> volora [color="green"];
+
+	subgraph cluster_dbserver {
+		label="Oracle 10g DB (Solaris 10)\nadb01";
+		rank = "same";
+		lessonsdb; umiacdb;
+	}
+
+	subgraph cluster_eyeballs {
+		label = "Traffic sources";
+		rank = "same";
+		enduser;
+	}
+
+	subgraph storage {
+		rank="same";
+		volora; afslessons;
+	}
+
+	subgraph svcs {
+		rank="same";
+		umiac; cosign;
+	}
+
+	enduser [label = "end-user browser(s)", labelloc="t", penwidth="0", shapefile="icons/cloud.png"]
+	enduser -> UMNet -> lbs [color="green"];
+	lbs -> buddha:apache [color = "green"]
+#	lbs -> socrates:apache [color = "green"]
+}

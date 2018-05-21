@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>drraw - Netscaler ns2.ds (141.211.253.194)</title>
+<meta http-equiv="Refresh" content="1800">
+<style type="text/css">
+<!-- 
+body {
+        background: #FFD89D;
+}
+.padless {
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+    padding: 0pt;
+}
+.small {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+
+}
+.smallred {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: red;
+}
+.normal {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+.red {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: red;
+}
+.simplyred {
+    color: red;
+}
+tr.header {
+    background-color: #FF9900;
+}
+.code {
+    font-family: Courier;
+    font-size: 10px;
+    background-color: #FFE2B7;
+    border: 2pt #FF9900 solid;
+    padding: 5pt;
+}
+.error {
+    font-weight: bold;
+    background-color: red;
+    border: 2pt #FF9900 solid;
+    padding: 5pt;
+}
+.help {
+    color: Maroon;
+    background: #E0E0E0;
+    border: 1pt black solid;
+    padding: 5pt;
+}
+div.tag {
+    border-top: 2px solid #FF9900;
+    margin-top: 1em;
+    padding-top: 0.5em;
+    font-size: 75%;
+    text-align: right;
+    color: #FF9900;
+}
+
+div.tag a {
+    color: #FF9900;
+}
+
+ -->
+</style>
+</head><body>
+<table width="100%" border="0"><tbody><tr><td valign="top" align="right"><a
+ 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/fwd.cgi?url=https%3A%2F%2Fctstats.ds.itd.umich.edu%2Fstats-bin%2Fdrraw.cgi%3FMode%3Dview%3BDashboard%3D1191545928.21917">[Login]</a>
+</td></tr></tbody></table><script language="JavaScript">
+var ViewerStart;
+var ViewerRefresh;
+function ViewerCountdown(target) {
+  if (!ViewerStart || !ViewerRefresh)
+      return;
+  var targetElement;
+  targetElement = document.getElementById(target);
+  if (!targetElement)
+      return;
+  now = new Date();
+  elapsed = ( now - ViewerStart ) / 1000;
+  if (elapsed > ViewerRefresh + 30) {
+      if ((elapsed - ViewerRefresh) % 2 < 1) {
+          targetElement.innerHTML = "<b class=simplyred>Refresh failed, hit Reload</b>";
+      } else {
+          targetElement.innerHTML = "<b>Refresh failed, hit Reload</b>";
+      }
+      setTimeout("ViewerCountdown(thetarget)", 1000);
+  } else if (elapsed > ViewerRefresh-1) {
+      targetElement.innerHTML = "<b>Refreshing...</b>";
+      setTimeout("ViewerCountdown(thetarget)", 10000);
+  } else {
+      with (Math) {
+          min = floor((ViewerRefresh - elapsed) / 60);
+          sec = floor((ViewerRefresh - elapsed) % 60);
+          if (min < 1) {
+              if (sec < 30 && sec % 2 == 0)
+                  targetElement.innerHTML = "<b>Refreshing in "+ sec +"s</b>";
+              else
+                  targetElement.innerHTML = "Refreshing in "+ sec +"s";
+          } else
+              targetElement.innerHTML = "Refreshing in "+ min +"m "+ sec +"s";
+      }
+      thetarget=target;
+      setTimeout("ViewerCountdown(thetarget)", 1000);
+  }
+}
+</script>
+<table width="100%" border="0"><tbody><tr><td><h1>Netscaler ns2.ds 
+(141.211.253.194)</h1></td> <td valign="top" align="right"><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi"><b>[Home]</b></a>
+  <a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Browse=Rcs;Id=d1191545928.21917">[RCS
+ Log]</a> <br> <small><b>2010-04-28 08:30:46</b></small> <br> <small 
+id="counter">Refreshing in 29m 29s</small></td></tr></tbody></table><script type="text/javascript">ViewerStart = new Date(); ViewerRefresh = 1800;setTimeout("ViewerCountdown('counter')", 1000);</script><p
+ align="center"><b> [Past 28 Hours] </b><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917;View=1;Filter=">
+ [Past Week] </a><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917;View=2;Filter=">
+ [Past Month] </a><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917;View=3;Filter=">
+ [Past Quarter] </a><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917;View=4;Filter=">
+ [Past Year] </a><a 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917;View=5;Filter=">
+ [Past 2 Years] </a></p><form method="get" 
+action="/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917" 
+enctype="application/x-www-form-urlencoded" align="center">
+<p align="center"><input name="View" value="-1" type="hidden"><input 
+name="Dashboard" value="1191545928.21917" type="hidden">Start: <input 
+name="Start" value="end - 28 hours" type="text">End: <input name="End" 
+value="now" type="text"><br>Filter: <input name="Filter" type="text"><br><input
+ name="Mode" value="view" type="submit"></p></form><p align="center"></p><table
+ align="center" border="0"><tbody><tr><td><a target="j" 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;View=0;Template=1201793539.4975;Base=%2Fctstats%2Fdata%2F%2Fnetscaler%2Fsys%2F141.211.253.194%2F141.211.253.194.rrd"><img
+ title="t1201793539.4975" 
+src="netscaler-ns2.ds-042810-0830_files/drraw_004.png" 
+onerror='this.onerror=null; this.src ="/icons/unknown.gif"' 
+align="center" border="0"></a></td><td><a target="a" 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;View=0;Template=1253960760.18563;Base=%2Fctstats%2Fdata%2F%2Fnetscaler%2Fvserver%2F141.211.253.194%2Flessons_ssl.rrd"><img
+ title="t1253960760.18563" 
+src="netscaler-ns2.ds-042810-0830_files/drraw.png" 
+onerror='this.onerror=null; this.src ="/icons/unknown.gif"' 
+align="center" border="0"></a></td></tr><tr><td><a target="k" 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;View=0;Template=1201918325.31533;Base=%2Fctstats%2Fdata%2F%2Fnetscaler%2Fssl%2F141.211.253.194%2F141.211.253.194.rrd"><img
+ title="t1201918325.31533" 
+src="netscaler-ns2.ds-042810-0830_files/drraw_005.png" 
+onerror='this.onerror=null; this.src ="/icons/unknown.gif"' 
+align="center" border="0"></a></td><td><a target="l" 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;View=0;Template=1201918747.31710;Base=%2Fctstats%2Fdata%2F%2Fnetscaler%2Fssl%2F141.211.253.194%2F141.211.253.194.rrd"><img
+ title="t1201918747.31710" 
+src="netscaler-ns2.ds-042810-0830_files/drraw_003.png" 
+onerror='this.onerror=null; this.src ="/icons/unknown.gif"' 
+align="center" border="0"></a></td></tr><tr><td><a target="h" 
+href="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;View=0;Template=1253961188.18731;Base=%2Fctstats%2Fdata%2F%2Fnetscaler%2Facl%2F141.211.253.194%2Fumiacdbcluster.ds540_540.rrd"><img
+ title="t1253961188.18731" 
+src="netscaler-ns2.ds-042810-0830_files/drraw_002.png" 
+onerror='this.onerror=null; this.src ="/icons/unknown.gif"' 
+align="center" border="0"></a></td></tr></tbody></table><div class="tag">Brought
+ to you by  <a href="http://web.taranis.org/drraw/"><em>drraw</em></a> 
+(version 2.2a5)</div>NB. <img 
+src="netscaler-ns2.ds-042810-0830_files/unknown.gif" title="unk"> means 
+there is no info to draw a graph for the selected time-period
+<br>
+questions? ask ctops@umich.edu
+(141.211.253.28)
+
+</body></html>

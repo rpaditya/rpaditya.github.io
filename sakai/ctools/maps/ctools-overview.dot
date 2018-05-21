@@ -1,0 +1,61 @@
+graph ctools
+{
+#	overlap = false
+#	rankdir = LR
+#	ranksep = 1.0;
+	ratio= "auto";
+	comound="true";
+	fontsize=8;
+
+	node [shape="oval", fontsize=9];
+	edge [arrowsize=1, color=black];
+
+	label="CTools Overview";
+
+	ctoolsdb [label="CTools DB", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1178035455.23662"]
+	appservers [
+		shape="record"
+		label="{CTools app servers|{<apache> Apache|<ctools> Tomcat|postfix}}", 
+		URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1194322225.25790"]
+
+	UMNet [label="ALDF", labelloc="t", style="rounded,dotted", penwidth="0", shape="point", shapefile="icons/router.png"]
+
+	lbs [label="load balancers", labelloc="b", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917", penwidth="0"]
+
+#	lbs -- UMNet
+
+#	searchserver -- UMNet -- AFS [color = "red"]
+	searchserver -- appservers:ctools [color = "purple"]
+
+	volctfs [label="Sakai resources vols", color="red", shape="box", style="solid", shapefile="icons/disk_subsystem.png"]
+	volora [label="Oracle DB vols", color="blue", shape="box", style="solid", shapefile="icons/disk_subsystem.png"]
+
+	subgraph cluster_storage {
+		label="boxcar netapp";
+		URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view&Dashboard=1151462293.28892";
+		rank = "same";
+		volctfs; volora;
+	}
+	
+  	appservers -- ctoolsdb:ctools [color = "blue"]
+	ctoolsdb -- volora [color = "green"]
+	appservers:ctools -- volctfs [color = "green"]
+	searchserver -- volctfs [color = "green"]
+
+	appservers:ctools -- umiac
+	umiac -- ctoolsdb
+
+	subgraph cluster_servers {
+		rank = "same";
+		label = "Servers";
+		URL = "http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1194322225.25790";
+		appservers; searchserver; umiac;
+	}
+
+#	subgraph cluster_ctools {
+#		label = "CTools primary site";
+#		appservers; searchserver; ctoolsdb; boxcar; lbs;
+#	}
+
+	"end-users" -- UMNet -- lbs -- appservers:apache [color = "cyan"]
+}

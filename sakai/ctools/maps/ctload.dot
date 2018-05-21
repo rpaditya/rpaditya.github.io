@@ -1,0 +1,53 @@
+graph ctload
+{
+
+	overlap = false
+	rankdir = LR
+
+	mdb02 [label="mdb02.ds.itd", URL="http://tinyurl.com/db-ctload"]
+	ns1 [label="ns1.os.itd", URL="http://tinyurl.com/netscaler-ns1.os"]
+
+	caboose [label="caboose netapp", URL="http://tinyurl.com/netapp-caboose"]
+	
+	pvtnet [label="private network", shape="box3d"]
+
+	pubseafoodnet [label="seafood net", shape="point"]
+	pubosnet [label="pub os net", shape="point"]
+
+	pubvipnet [label="pub-vip net", shape="point"]
+
+	lobster [label="lobster"]
+	clam [label="clam"]
+	oyster [label="oyster"]
+	octopus [label="octopus"]
+	scallop [label="scallop"]
+
+	subgraph cluster_appservers {
+		rank = same;
+		label = "appsevers"
+		lobster; clam; oyster; octopus; scallop
+	}
+	
+	ns1 -- pubosnet
+	ns1 -- pubseafoodnet
+	ns1 -- pubvipnet
+
+  	mdb02 -- pubosnet
+	mdb02 -- pvtnet
+
+	caboose -- pvtnet
+
+	lobster -- pubseafoodnet
+	clam -- pubseafoodnet
+	oyster -- pubseafoodnet
+	octopus -- pubseafoodnet
+	scallop -- pubseafoodnet
+
+	lobster -- pvtnet
+	clam -- pvtnet
+	oyster -- pvtnet
+	octopus -- pvtnet
+	scallop -- pvtnet
+
+}
+

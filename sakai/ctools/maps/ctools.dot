@@ -1,0 +1,91 @@
+graph ctools
+{
+	overlap = false
+#	rankdir = LR
+	ranksep = 1.0;
+
+	ctoolsdb [label="CTools DB", URL="http://tinyurl.com/db-ctools"]
+	ctoolssecdb [label="CTools DB Secondary", URL="http://tinyurl.com/db-ctools-sec"]
+
+#	ns1 [label="ns1.ds.itd", URL="http://tinyurl.com/netscaler-ns1.ds"]
+#	ns2 [label="ns2.ds.itd", URL="http://tinyurl.com/netscaler-ns2.ds"]
+
+	boxcar [label="boxcar netapp", URL="http://tinyurl.com/netapp-boxcar"]
+	flatcar [label="flatcar netapp", URL="http://tinyurl.com/netapp-flatcar"]
+
+	pubosnet [label="141.211.140.0/27"]
+	pvtosnet [label="10.211.253.0/24"]
+
+	maccsw [label="MACC net"]
+	aldfsw [label="aldf net"]
+	
+	pvtnet [label="10.211.253.0/24"]
+	pubnet [label="141.211.253.0/24"]
+	vipnet [label="141.211.48.0/27"]
+
+	vipnet -- aldfsw
+
+	repnet [label="192.168.248/29"]
+
+	subgraph cluster_swg {
+		label = "ALDF sw-g";
+		pvtnet; pubnet; vipnet; repnet;
+	}
+
+	reposnet [label="192.168.254/29"]
+
+	subgraph cluster_maccsw12ab {
+		label = "MACC sw12";
+		pubosnet; pvtosnet; reposnet;
+	}
+
+	appservers -- pvtnet -- boxcar
+	appservers -- pubnet -- lbs	
+
+	searchserver -- AFS
+	searchserver -- pvtnet -- boxcar
+	
+	lbs -- pvtnet
+	lbs -- pubnet
+	lbs -- vipnet
+
+	subgraph cluster_aldf {
+		label="ALDF";
+		lbs; appservers; searchserver; ctoolsdb; pvtnet; aldfsw; repnet; pubnet; vipnet; boxcar; AFS; swg;
+	}
+
+	subgraph cluster_macc {
+		label="MACC";
+		ctoolssecdb; maccsw; reposnet; flatcar; pubosnet; pvtosnet; maccsw12ab;
+	}
+
+  	appservers -- lbs -- ctoolsdb [color = "blue"]
+	ctoolsdb -- pvtnet -- boxcar [color = "green"]
+
+	ctoolssecdb -- pvtosnet -- flatcar [color = "green"]
+	ctoolsdb -- pubnet -- aldfsw -- maccsw -- pubosnet -- ctoolssecdb [color="purple"]
+
+	boxcar -- repnet -- aldfsw -- maccsw -- reposnet -- flatcar [color="blue"]
+
+#	alaking [label="alaking"]
+#	potpie [label="potpie"]
+#	sirloin [label="sirloin"]
+#	kungpao [label="kungpao"]
+#	turducken [label="turducken"]
+#	ribeye [label="ribeye (search)"]
+
+#	subgraph cluster_appservers {
+#		URL = "http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1194322225.25790";
+#		rank = same;
+#		label = "appservers"
+#		alaking; potpie; sirloin; kungpao; turducken; ribeye
+#	}
+
+#	subgraph cluster_lbs {
+#		rank = same;
+#		label = "loadbalancers";
+#		ns1; ns2;
+#	}
+
+}
+

@@ -1,0 +1,147 @@
+digraph ctoolsnonprod
+{
+	overlap = false
+#	rankdir = LR
+	ranksep = 0.65;
+	ratio= "auto";
+	comound="true";
+	fontsize=8;
+
+	node [shape="oval", fontsize=9, labelloc="t"];
+	edge [arrowsize=0.5, color=black, dir="both"];
+
+	label="CTools Non-prod Environments";
+
+	"test-users" [label="human testers", penwidth="0", shapefile="icons/cloud.png"];
+	"test-users" -> ns1os [dir="both", style="dotted"];
+
+	loadtestvus [label = "LR VUs", penwidth="0", shapefile="icons/cloud.png"];
+	loadtestvus -> ns1os -> ctoolsload [dir="both", style="dotted", color="cyan"];
+	
+	lrc [label="LR Controller (Windows)", labelloc="c"]
+	subgraph cluster_lr {
+		label = "LR loadgen (RHEL5)";
+		rank = "same";
+		abalone; venison;
+	}
+
+	abalone [labelloc="c"];
+	abalone -> loadtestvus [color="cyan"];
+	venison [labelloc="c"];
+	venison -> loadtestvus [color="cyan"];
+	
+	lrc -> abalone [color="cyan"];
+	lrc -> venison [color="cyan"];
+
+	ns1os [label="LB ns1.os", labelloc="b", shapefile="icons/gswanson_Citrix_Netscaler_1.png", penwidth="0"];
+
+	HEQA [penwidth="0", shapefile="icons/db.jpg"];
+	HEODS [penwidth="0", shapefile="icons/db.jpg"];
+#	HEPROD [penwidth="0", shapefile="icons/db.jpg"];
+	
+	subgraph cluster_maisdb {
+		label="MAIS DB";
+		rank="same";
+		HEQA; 
+		HEODS; 
+#		HEPROD;
+	}
+
+	HEQA -> heqaumiac [color="brown", dir="right"];
+	umiac [shape="house", color="brown", labelloc="c"]
+	HEODS -> umiac -> testumiac [color="brown", dir="right"];
+	umiac -> umiacload [style="dotted", color="brown", dir="right"];
+#	HEPROD -> umiac [color="brown"];
+
+
+	testctools [ shape="record",
+		label="{Testctools (staging)|{<crab> crab|<sstest> mussel\n(search)}}", 
+		labelloc="c", URL="https://testctools.ds.itd.umich.edu"];
+
+	ns1os -> testctools;
+	testumiac [shape="house", color="brown", labelloc="c"];
+	testctools -> testumiac [color="brown", dir="left"];
+	testctools -> dbcttest [color="blue"];
+	testumiac -> dbtestumiac [color="blue", dir="left"];
+	afscttest [label="/ctfstest", penwidth="0", shapefile="icons/disk_subsystem.png"];
+	testctools -> afscttest [color="red"];
+	afscttestsearch [label="/ctpitest", penwidth="0", shapefile="icons/disk_subsystem.png"];
+	testctools:sstest -> afscttestsearch [color="purple"];
+
+	ctoolsload [shape="record",
+			label="{CTload|{clam|lobster|octopus|oyster|scallop|shrimp\n(search)}}", 
+			labelloc="c", URL="https://ctoolsload.ds.itd.umich.edu"];
+	ns1os -> ctoolsload;
+	umiacload [shape="house", color="brown", labelloc="c"];
+	ctoolsload -> umiacload [color="brown", dir="left"];
+	ctoolsload -> dbctload [color="blue"];
+	umiacload -> dbumiacload [color="blue", dir="left"];
+	ctfsload [penwidth="0", shapefile="icons/disk_subsystem.png"];
+	ctoolsload -> ctfsload [color="red"];
+	voldbctfsload [penwidth="0", shapefile="icons/disk_subsystem.png"];
+	dbctload [label="ctools_convert3", penwidth="0", shapefile="icons/db.jpg"];
+	dbctload -> voldbctfsload [color="green"];
+	dbumiacload [label="umiacv2", penwidth="0", shapefile="icons/db.jpg"];
+	dbumiacload -> voldbctfsload [color="green"];
+
+	ctdev [shape="record",
+		label="{CTdev|{bbq|kebab}}", labelloc="c", URL="https://ctdev.ds.itd.umich.edu"];
+	ns1os -> ctdev;
+	heqaumiac [shape="house", color="brown", labelloc="c"];
+	ctdev -> heqaumiac [style = "dashed", color="brown", dir="left"];
+	ctdev -> testumiac [style = "dashed", color="brown", dir="left"];
+	ctdev -> dbctdev [color="blue"];
+	heqaumiac -> dbheqaumiac [color="blue"];
+	afsctpilot [label="/ctpilot/fs10[1,2,3]", penwidth="0", shapefile="icons/disk_subsystem.png"];
+	ctdev -> afsctpilot [color="red"];
+
+	ctint [shape="record",
+		label="{CTInt|{virtappsrvr01|virtappsrvr02}}", labelloc="c", URL="https://ctint.ds.itd.umich.edu"];
+	ns1os -> ctint;
+	ctint -> heqaumiac [color="brown", dir="left"];
+	ctint -> dbctint [color="blue"];
+	afsctpilotint [label="/ctpilot/ctint/fs10[1,2,3]", penwidth="0", shapefile="icons/disk_subsystem.png"];
+	ctint -> afsctpilotint [color="red"];
+
+	voldbcttest [penwidth="0", shapefile="icons/disk_subsystem.png"];
+	dbcttest [label="ctools_convert", penwidth="0", shapefile="icons/db.jpg"];
+	dbcttest -> voldbcttest [color="green"];
+	dbtestumiac [label="umiacv2", penwidth="0", shapefile="icons/db.jpg"];
+	dbtestumiac -> voldbcttest [color="green"];
+	dbctdev [label="ctools_dev", penwidth="0", shapefile="icons/db.jpg"];
+	dbctdev -> voldbcttest [color="green"];
+	dbctint [label="ctint_user", penwidth="0", shapefile="icons/db.jpg"];
+	dbctint -> voldbcttest [color="green"];
+	dbheqaumiac [label="heqaumiac",penwidth="0", shapefile="icons/db.jpg"];
+	dbheqaumiac -> voldbcttest [color="green"];
+
+	subgraph {
+		umiac; umiacload; testumiac; heqaumiac;
+	}
+
+	subgraph cluster_afs {
+		label = "AFS /afs/umich.edu/group";
+		rank = "same";
+		afscttest; afscttestsearch; afsctpilotint; afsctpilot; 
+	}
+
+	subgraph cluster_netapp {
+		label = "caboose (Netapp 3020)";
+		URL="http://ctstats.os.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1202420113.2594";
+		rank = "same";
+		ctfsload; voldbctfsload; voldbcttest;
+	}
+
+	dbctoolsarchive [label="ctools_archive", penwidth="0", shapefile="icons/db.jpg"];
+	subgraph cluster_sharkfin {
+		label = "Oracle 10g CTTEST@sharkfin (RHEL5 x86)";
+		rank = "same";
+		dbcttest; dbctint; dbctdev; dbtestumiac; dbctoolsarchive; dbheqaumiac;
+	}
+
+	subgraph cluster_mdb02 {
+		label = "Oracle 10g CTLOAD@mdb02 (Solaris 10 T2)";
+		rank = "same";
+		dbctload; dbumiacload;
+	}
+}

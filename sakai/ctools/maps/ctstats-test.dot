@@ -1,0 +1,152 @@
+digraph ctstats
+{
+	overlap = false
+#	rankdir = LR
+#	ranksep = 1.0;
+	ratio = "auto";
+	compound="true";
+
+	node [shape="oval", fontsize=9, labelloc="c"];
+	edge [arrowsize=0.5, color=black];
+
+	label="CTools stats collection";
+
+	UMNet [label="ALDF", labelloc="t", style="rounded,dotted", penwidth="0", shape="point", shapefile="icons/router.png"]
+	UMNetMacc [label="MACC", labelloc="t", style="rounded,dotted", penwidth="0", shape="point", shapefile="icons/router.png"]
+
+	ctoolsdb [label="CTools DB", color="blue", style="solid", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1178035455.23662", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+	appservers [label="CTools app servers", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1194322225.25790"]
+
+	secctoolsdb [label="Secondary CTools DB", color="blue", style="solid", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+	secappservers [label="Secondary appservers"]
+
+	voladmin [shape="record", label="{<weblog> Weblogs|<rrd> RRD files|<nettracker> Nettracker files}"]
+#	voladmin [label="CTstats data", labelloc="t", color="blue", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+
+	ns1 [label="ns1.ds lb", labelloc="b", shape="box", style="dotted", penwidth="0", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1204922853.5498"]
+	ns2 [label="ns2.ds lb", labelloc="b", shape="box", style="dotted", penwidth="0", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917"]
+	ns1os [label="ns1.os lb", labelloc="b", shape="box", style="dotted", penwidth="0", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1204919004.3540"]
+
+	ns1 -> appservers [style="dotted"]
+	ns2 -> appservers [style="dotted"]
+
+	tau [shape="record", label="{ctstats.ds (tau)|{<snmp> SNMP|<drraw> drraw}|{<rrd> RRD}}"]
+	chi [shape="record", label="{ctstats.os (chi)|{<snmp> SNMP|<drraw> drraw|<nslog> nsweblog}|{<rrd> RRD}}"]
+
+	feet [shape="record", label="{weblog, nettracker (feet)|{<nslog> nsweblog|<nettracker> nettracker|<dbjsp> DB JSP}}"]
+
+	feet:dbjsp -> ctoolsdb;
+	feet:dbjsp -> secctoolsdb;
+
+	feet:nslog -> voladmin:weblog [color="green"]
+	feet:nettracker -> voladmin:nettracker [color="green"]
+
+	tau:snmp -> tau:rrd [color="green"]
+
+	voladmin:rrd -> tau:drraw [color="green"]	
+	tau:rrd -> tau:drraw
+
+	voladmin:rrd -> chi:drraw
+	chi:rrd -> chi:drraw
+
+	ns1 -> tau:snmp [dir="left", color="red"]
+	ns2 -> tau:snmp [dir="left", color="red"]
+
+	ns1os -> chi:snmp [dir="left", color="red"]
+
+	ns1os -> chi:nslog [color="blue"]
+	ns2 -> feet:nslog [color="blue"]
+	ns1 -> feet:nslog [color="blue"]
+
+	subgraph cluster_lb {
+		label="load balancers";
+		rank="same";
+		ns1; ns2;
+	}
+
+#	searchserver -> appservers [color = "purple", style="dotted"]
+
+#	volctfs [label="Sakai resources vols", labelloc="t", color="red", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+#	volora [label="Oracle DB vols", labelloc="t", color="blue", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+
+
+#	flatcarvolctfs [label="Sakai resources vols replicas", labelloc="t", color="red", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+#	flatcarvolora [label="Oracle DB vols secondary", labelloc="t", color="blue", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+
+	subgraph cluster_storage {
+		label="boxcar netapp";
+		URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view&Dashboard=1151462293.28892";
+		rank = "same";
+		style = "rounded";
+#		volctfs; 
+#		volora;
+		voladmin;
+	}
+
+	subgraph cluster_macc_test_storage {
+		label="caboose netapp";
+		URL="http://ctstats.os.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1202420113.2594";
+		rank = "same";
+		style = "rounded";
+	}
+
+
+	subgraph cluster_macc_storage {
+		label="flatcar netapp";
+		URL="http://ctstats.os.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1233110962.16117";
+		rank = "same";
+		style = "rounded";
+#		flatcarvolctfs; 
+#		flatcarvolora;
+	}
+	
+#  	appservers -> ctoolsdb [color = "blue", dir="both", style="dotted"]
+#	ctoolsdb -> volora [color = "green", dir="both", style="dotted"]
+#	appservers ->  volctfs [color = "green", dir="both", style="dotted"]
+#	volctfs -> searchserver [color = "green", style="dotted"]
+
+#	appservers -> umiac [dir="both", style="dotted"]
+#	ctoolsdb -> umiac  [style="dotted", style="solid"]
+
+	"end-users" [penwidth="0", labelloc="t", shapefile="icons/cloud.png"];
+
+	"end-users" -> UMNet -> ns2 -> appservers [color = "brown", dir="both", style="dotted"]
+
+#	repnet [label="192.168.248/29", style="solid", color="red"]
+#	reposnet [label="192.168.254/29", style="solid", color="red"]
+
+#	volctfs -> repnet -> UMNet -> UMNetMacc -> reposnet -> flatcarvolctfs [color="red", style="solid"]
+
+#	volora -> ctoolsdb -> UMNet -> UMNetMacc -> secctoolsdb -> flatcarvolora [color="blue"]
+
+#	UMNet -> UMNetMacc [dir="both"]
+
+#	ns1os -> secappservers [style="dotted"]
+
+	ns1os -> UMNetMacc [dir="both", style="dotted"]	
+
+	subgraph aldf {
+		label="aldf";
+		UMNet; 
+		tau;
+		feet;
+#		appservers; 
+#		searchserver; 
+#		ctoolsdb; 
+#		repnet;
+	}
+
+#	secctoolsdb -> secappservers [color="brown", style="dashed"]
+#	flatcarvolora -> secctoolsdb [color="green", style="dashed"]
+#	flatcarvolctfs -> secappservers [color="green", style="dashed"]
+
+	subgraph macc {
+		label="macc";
+		UMNetMacc; 
+#		secappservers; 
+#		secctoolsdb; 
+#		reposnet; 
+		chi;
+		ns1os;
+	}
+}

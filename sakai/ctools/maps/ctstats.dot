@@ -1,0 +1,107 @@
+digraph ctstats
+{
+	overlap = false
+#	rankdir = LR
+#	ranksep = 1.0;
+	ratio = "auto";
+	compound="true";
+
+	node [shape="oval", fontsize=9, labelloc="c"];
+	edge [arrowsize=0.5, color=black, fontsize=7];
+
+	label="CTools stats collection";
+
+	UMNet [label="ALDF", labelloc="t", style="rounded,dotted", penwidth="0", shape="point", shapefile="icons/router.png"]
+
+	AFS [shape="record", label="{AFS|{<ctlogs> ctlogs}}"]
+
+	UMNet -> AFS [style="invisible", dir="none"]
+
+	nagios [shape="record", label="{Nagios|{<check> service check|<event> event_handler}}"];
+
+	subgraph external {
+		rank="same";
+		UMNet; AFS; nagios;
+	}
+
+	ctoolsdb [label="CTools DB", color="blue", style="solid", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1178035455.23662", labelloc="t", penwidth="0", shapefile="icons/db.jpg"]
+
+	ctoolsdb->volora [color="green"]
+
+	appservers [shape="record",
+	 label="{CTools app servers|{<snmpd> snmpd|{<tomcat> Tomcat|{<sakai> Sakai JSP|<jvmsnmpd> snmpd}}}}",
+	 URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1194322225.25790"]
+
+	appservers:tomcat -> ctoolsdb [dir="both", color="blue", label="dbcp"]
+
+	voladmin [shape="record", label="{voladmin|{<weblog> Weblogs|<rrd> RRD files|<nettracker> Nettracker files}}"]
+
+	ns1 [label="ns1.ds lb", labelloc="b", shape="box", style="dotted", penwidth="0", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1204922853.5498"]
+	ns2 [label="ns2.ds lb", labelloc="b", shape="box", style="dotted", penwidth="0", shapefile="icons/gswanson_Citrix_Netscaler_1.png", URL="http://ctstats.ds.itd.umich.edu/stats-bin/drraw.cgi?Mode=view;Dashboard=1191545928.21917"]
+
+
+	ns1 -> appservers [style="dotted"]
+	ns2 -> appservers [style="dotted"]
+
+	nagios:check -> ns2 -> appservers [style="dotted", color="green", label=""];
+	nagios:check -> appservers [style="dotted", color="green", label="check/5m timeout/15s retry/30s"];
+	nagios:event -> appservers [style="dashed", color="red", label="restart app after 5 check failures"];
+
+	tau [shape="record", label="{ctstats.ds (tau)|<apache> Apache|{<drraw> drraw.cgi}|{<snmp> SNMP|<scr> scripts}|{<rrd> RRD}}"]
+
+	feet [shape="record",
+	 label="{ctsupport (feet)|{<nslog> nsweblog|<toolprof> rrdtoolprofile|<nettracker> nettracker|<dbjsp> DB JSP}}"]
+
+	feet:dbjsp -> ctoolsdb [label="jdbc"];
+
+	feet:nslog -> voladmin:weblog [color="green"]
+	feet:nettracker -> voladmin:nettracker [color="green"]
+
+	AFS:ctlogs -> feet:nettracker [color="green"]
+	ctoolsdb -> AFS:ctlogs
+
+	voladmin:weblog -> feet:toolprof [color="green"]
+	feet:toolprof -> voladmin:rrd [color="purple"]
+
+	tau:snmp -> appservers:snmpd [color="brown"]
+	tau:snmp -> appservers:jvmsnmpd [color="brown"]
+	tau:scr -> appservers:sakai
+	tau:scr -> feet:dbjsp
+
+	voladmin:rrd -> tau:drraw [color="red"]	
+
+	ns1 -> tau:snmp [dir="left", color="brown"]
+	ns2 -> tau:snmp [dir="left", color="brown"]
+
+	ns2 -> feet:nslog [color="blue"]
+	ns1 -> feet:nslog [color="blue"]
+
+	subgraph cluster_lb {
+		label="load balancers";
+		rank="same";
+		ns1; ns2;
+	}
+
+	volora [label="Oracle DB vols", labelloc="t", color="blue", shape="box", style="solid", penwidth="0", shapefile="icons/disk_subsystem.png"]
+
+	boxcar [shape="record", label="{boxcar|{<snmpd> snmpd|<sshd> sshd}}"];
+
+	tau:snmp -> boxcar:snmpd [color="brown"]
+	tau:scr -> boxcar:sshd [color="brown"]
+
+	subgraph cluster_storage {
+		label="NAS";
+		boxcar; voladmin; volora;
+	}
+
+	"end-users" [penwidth="0", labelloc="t", shapefile="icons/cloud.png"];
+	"end-users" -> UMNet -> ns2 -> appservers [color = "brown", dir="both", style="dotted"]
+
+	subgraph ctstats {
+		tau; feet;
+	}
+
+	subgraph ctprod {
+		appservers; ctoolsdb;
+	}
+}

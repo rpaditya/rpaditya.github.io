@@ -1,0 +1,26 @@
+head	1.1;
+access;
+symbols;
+locks
+	aditya:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2007.12.03.00.20.16;	author aditya;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@@@import url(s5-core.css); /* required to make the slide show run at all */
+@@import url(framing.css); /* sets basic placement and size of slide components */
+@@import url(pretty.css);  /* stuff that makes the slides look better than blah */@
